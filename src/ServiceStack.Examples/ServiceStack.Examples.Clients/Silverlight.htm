@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+    <title>ServiceStack Examples :: Silverlight Client</title>
+
+    <link rel="stylesheet" type="text/css" href="default.css" />
+
+    <style type="text/css">
+    #silverlightControlHost {
+	    height: 400px;
+	    text-align:center;
+	    border: solid 1px #ccf;
+    }
+    </style>
+    <script type="text/javascript" src="js/Silverlight.js"></script>
+    <script type="text/javascript">
+        function onSilverlightError(sender, args) {
+            var appSource = "";
+            if (sender != null && sender != 0) {
+              appSource = sender.getHost().Source;
+            }
+
+            var errorType = args.ErrorType;
+            var iErrorCode = args.ErrorCode;
+
+            if (errorType == "ImageError" || errorType == "MediaError") {
+              return;
+            }
+
+            var errMsg = "Unhandled Error in Silverlight Application " +  appSource + "\n" ;
+
+            errMsg += "Code: "+ iErrorCode + "    \n";
+            errMsg += "Category: " + errorType + "       \n";
+            errMsg += "Message: " + args.ErrorMessage + "     \n";
+
+            if (errorType == "ParserError") {
+                errMsg += "File: " + args.xamlFile + "     \n";
+                errMsg += "Line: " + args.lineNumber + "     \n";
+                errMsg += "Position: " + args.charPosition + "     \n";
+            }
+            else if (errorType == "RuntimeError") {
+                if (args.lineNumber != 0) {
+                    errMsg += "Line: " + args.lineNumber + "     \n";
+                    errMsg += "Position: " +  args.charPosition + "     \n";
+                }
+                errMsg += "MethodName: " + args.methodName + "     \n";
+            }
+
+            throw new Error(errMsg);
+        }
+    </script>
+</head>
+<body>
+    <div id="header-links">
+        <a href="../ServiceStack.Hello/">Hello World</a>
+        <a href="../RestFiles/">The Rest Files</a>
+        <a href="../RedisStackOverflow/">Redis StackOverflow</a>
+        <a href="../ServiceStack.MovieRest/">REST at the Movies</a>
+        <a href="../ServiceStack.Northwind/">Northwind Database</a>
+        <a href="../ServiceStack.Examples.Clients/">Ajax Client</a>
+        <a href="../ServiceStack.Examples.Clients/Soap12.aspx">Soap 1.2</a>
+    </div>
+
+    <a href="http://www.servicestack.net"><img src="img/demo-logo-servicestack.png" alt="Service Stack Demo" /></a>
+
+    <h1>Calling web services using Silverlight</h1>
+
+    <p>
+        For performance reasons, the preferred to call ServiceStack services for Silverlight clients
+        is using standard DataContracts via the XML endpoint at: <br />
+        <em>~/servicestack/xml/reply/{ServiceName}</em>
+    </p>
+    <div class="note">
+       As Silverlight is a different target runtime you will not be able to reference the
+       dll's that contain your DTO types directly.
+       Insead you can copy the DataContract's into your Silverlight Project and use them 'as-is', as done in this example.
+    </div>
+
+    <h4>1. First step is to initialize the ServiceClient</h4>
+    <code>
+        //Create a XmlServiceClient passing in the baseUrl where your services are hosted.
+        this.ServiceClient = new XmlServiceClient(
+            "http://localhost/ServiceStack.Examples.Host.Web/ServiceStack");
+    </code>
+
+    <h4>2. Ater that calling a service becomes as easy as:</h4>
+    <code>
+        var request = new GetFactorial { ForNumber = 3 };
+
+        //Note: As this is a synchronous request it should always be run in a backround thread.
+        this.ServiceClient.Send&lt;GetFactorialResponse&gt;(request, response => Console.WriteLine(response.Dump()));
+    </code>
+
+    <h4>3. Try the live examples yourself:</h4>
+    <form id="form1" runat="server">
+    <div id="silverlightControlHost">
+        <object data="data:application/x-silverlight-2," type="application/x-silverlight-2" width="100%" height="400px">
+		  <param name="source" value="ClientBin/ServiceStack.Examples.Clients.Silverlight.xap"/>
+		  <param name="onError" value="onSilverlightError" />
+		  <param name="background" value="white" />
+		  <param name="minRuntimeVersion" value="3.0.40624.0" />
+		  <param name="autoUpgrade" value="true" />
+		  <a href="http://go.microsoft.com/fwlink/?LinkID=149156&v=3.0.40624.0" style="text-decoration:none">
+ 			  <img src="http://go.microsoft.com/fwlink/?LinkId=108181" alt="Get Microsoft Silverlight" style="border-style:none"/>
+		  </a>
+	    </object><iframe id="_sl_historyFrame" style="visibility:hidden;height:0px;width:0px;border:0px"></iframe></div>
+    </form>
+
+    <h4>4. View the source code online or Download:</h4>
+    <p>
+        The complete source code for this example is
+        <a href="https://github.com/ServiceStack/ServiceStack.Examples/tree/master/src/ServiceStack.Examples/ServiceStack.Examples.Clients.Silverlight/">
+            viewable online
+        </a>
+        or available to download as zip package from the link below:
+
+        <a id="btn-download" href="https://github.com/ServiceStack/ServiceStack.Examples/downloads">
+            <img src="http://www.servicestack.net/btn-download.gif" alt="Download ServiceStack.Examples.zip">
+        </a>
+    </p>
+
+    <div id="footer-links">
+        <img src="img/Mono-powered-big.png" alt="powered by mono" />
+
+        <a href="Default.htm">Ajax Client Examples</a>
+        <a href="Silverlight.htm">Silverlight Examples</a>
+<!--        <a href="Flash.htm">Flash Examples</a>-->
+    </div>
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-7722718-7']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</body>
+</html>
